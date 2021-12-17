@@ -18,7 +18,6 @@ async function run(){
         await client.connect();
         const database = client.db('ToDoListDB');
         const ListCollection = database.collection('ListCollection');
-        const CompletedCollection = database.collection('CompletedCollection');
 
         //adding list
         app.post('/addinglist', async (req, res) => {
@@ -32,10 +31,39 @@ async function run(){
             const list = await cursor.toArray();
             res.send(list)
         })
-     
-    }
-    finally{
+        //posting complete list list
+        app.put('/completetask/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const option = {upsert: true};
+            const updatedoc = {
+                $set:{
+                    isDone: 'done'
+                }
+            }
+            const list = await ListCollection.updateOne(query, updatedoc, option)
+            res.json(list)
+        })
+        
+        //delete list
+        app.delete('/deleteone/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await ListCollection.deleteOne(query);
+            res.send(result)
+        })
+        app.delete('/deletealldone', async (req, res) => {
+            const id = req.params.id;
+            const query = {isDone: 'done'};
+            const result = await ListCollection.deleteMany(query);
+            res.send(result)
+        })
 
+        //find update list
+        app.get('/findupdatelist', async ())
+    } 
+    finally{
+        
     }
 }
 
