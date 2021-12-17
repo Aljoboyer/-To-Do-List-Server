@@ -7,7 +7,7 @@ require('dotenv').config();
 const port = process.env.PORT || 5000;
 
 //middleware 
-app.use(cors()); 
+app.use(cors());   
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASS}@cluster0.obwta.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -59,8 +59,27 @@ async function run(){
             res.send(result)
         })
 
-        //find update list
-        app.get('/findupdatelist', async ())
+        //find update list 
+        app.get('/findupdatelist/:id', async (req, res) =>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await ListCollection.findOne(query);
+            res.send(result)
+        }) 
+           // update list
+           app.put('/updatelist/:id', async (req, res) =>{
+            const id = req.params.id;
+            console.log(id)
+            const data = req.body;
+            const query = {_id: ObjectId(id)};
+            console.log(data)
+            const option = {upsert: true};
+            const updatedoc ={
+                $set: data
+            }
+            const list = await ListCollection.updateOne(query, updatedoc, option)
+            res.json(list)
+        }) 
     } 
     finally{
         
