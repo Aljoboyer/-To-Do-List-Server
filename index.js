@@ -67,7 +67,7 @@ async function run(){
             const result = await ListCollection.findOne(query);
             res.send(result)
         }) 
-           // update list
+           // update lists
            app.put('/updatelist/:id', async (req, res) =>{
             const id = req.params.id;
             console.log(id)
@@ -92,7 +92,7 @@ async function run(){
             const cursor = TestCollection.find({});
             const list = await cursor.toArray();
             res.send(list)
-        })
+        }) 
         app.put('/updatetestlist/:id', async (req, res) =>{
             const id = req.params.id;
             console.log(id)
