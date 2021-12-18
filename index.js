@@ -18,6 +18,7 @@ async function run(){
         await client.connect();
         const database = client.db('ToDoListDB');
         const ListCollection = database.collection('ListCollection');
+        const TestCollection = database.collection('TestCollection');
 
         //adding list
         app.post('/addinglist', async (req, res) => {
@@ -79,7 +80,39 @@ async function run(){
             }
             const list = await ListCollection.updateOne(query, updatedoc, option)
             res.json(list)
-        }) 
+        })
+
+        //----------for test collection of postman----------//
+        app.post('/insertdata', async(req, res) => {
+            const data = req.body;
+            const result = await TestCollection.insertOne(data);
+            res.json(result)
+        })
+        app.get('/alltestdata', async (req, res) => {
+            const cursor = TestCollection.find({});
+            const list = await cursor.toArray();
+            res.send(list)
+        })
+        app.put('/updatetestlist/:id', async (req, res) =>{
+            const id = req.params.id;
+            console.log(id)
+            const data = req.body;
+            const query = {_id: ObjectId(id)};
+            console.log(data)
+            const option = {upsert: true};
+            const updatedoc ={
+                $set: data
+            }
+            const list = await TestCollection.updateOne(query, updatedoc, option)
+            res.json(list)
+        })
+        app.delete('/deletetestdata/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = {_id: ObjectId(id)};
+            const result = await TestCollection.deleteOne(query);
+            res.send(result)
+        })
     } 
     finally{
         
